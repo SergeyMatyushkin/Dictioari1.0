@@ -10,7 +10,8 @@ import coil.ImageLoader
 import coil.request.LoadRequest
 import geekbrains.ru.translator.R
 import geekbrains.ru.translator.databinding.ActivityDescriptionBinding
-import geekbrains.ru.utils.network.isOnline
+import geekbrains.ru.utils.network.OnlineLiveData
+
 import geekbrains.ru.utils.ui.AlertDialogFragment
 
 class DescriptionActivity : AppCompatActivity() {
@@ -55,18 +56,22 @@ class DescriptionActivity : AppCompatActivity() {
     }
 
     private fun startLoadingOrShowError() {
-        if (isOnline(applicationContext)) {
-            setData()
-        } else {
-            AlertDialogFragment.newInstance(
-                getString(R.string.dialog_title_device_is_offline),
-                getString(R.string.dialog_message_device_is_offline)
-            ).show(
-                supportFragmentManager,
-                DIALOG_FRAGMENT_TAG
-            )
-            stopRefreshAnimationIfNeeded()
-        }
+        OnlineLiveData(this).observe(
+            this@DescriptionActivity,
+            {
+                if (it) {
+                    setData()
+                } else {
+                    AlertDialogFragment.newInstance(
+                        getString(R.string.dialog_title_device_is_offline),
+                        getString(R.string.dialog_message_device_is_offline)
+                    ).show(
+                        supportFragmentManager,
+                        DIALOG_FRAGMENT_TAG
+                    )
+                    stopRefreshAnimationIfNeeded()
+                }
+            })
     }
 
     private fun stopRefreshAnimationIfNeeded() {

@@ -5,17 +5,22 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import geekbrains.ru.core.BaseActivity
 import geekbrains.ru.history.view.history.HistoryActivity
 import geekbrains.ru.model.data.AppState
-import geekbrains.ru.model.data.DataModel
+
 import geekbrains.ru.translator.R
 import geekbrains.ru.translator.databinding.ActivityMainBinding
-import geekbrains.ru.translator.utils.convertMeaningsToString
+import geekbrains.ru.translator.utils.convertMeaningsToSingleString
+
 import geekbrains.ru.translator.view.descriptionscreen.DescriptionActivity
 import geekbrains.ru.translator.view.main.adapter.MainAdapter
-import geekbrains.ru.utils.network.isOnline
-import org.koin.android.viewmodel.ext.android.viewModel
+
+import geekbrains.ru.utils.ui.viewById
+import org.koin.android.scope.currentScope
+
 
 private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG = "74a54328-5d62-46bf-ab6b-cbf5fgt0-092395"
 
@@ -24,6 +29,9 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
     private lateinit var binding: ActivityMainBinding
     override lateinit var model: MainViewModel
     private val adapter: MainAdapter by lazy { MainAdapter(onListItemClickListener) }
+    private val mainActivityRecyclerview by viewById<RecyclerView>(R.id.main_activity_recyclerview)
+    private val searchFAB by viewById<FloatingActionButton>(R.id.search_fab)
+
     private val fabClickListener: View.OnClickListener =
         View.OnClickListener {
             val searchDialogFragment = SearchDialogFragment.newInstance()
@@ -32,13 +40,13 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
         }
     private val onListItemClickListener: MainAdapter.OnListItemClickListener =
         object : MainAdapter.OnListItemClickListener {
-            override fun onItemClick(data: DataModel) {
+            override fun onItemClick(data: geekbrains.ru.model.data.userdata.DataModel) {
                 startActivity(
                     DescriptionActivity.getIntent(
                         this@MainActivity,
-                        data.text!!,
-                        convertMeaningsToString(data.meanings!!),
-                        data.meanings!![0].imageUrl
+                        data.text,
+                        convertMeaningsToSingleString(data.meanings),
+                        data.meanings[0].imageUrl
                     )
                 )
             }
@@ -46,7 +54,6 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
     private val onSearchClickListener: SearchDialogFragment.OnSearchClickListener =
         object : SearchDialogFragment.OnSearchClickListener {
             override fun onClick(searchWord: String) {
-                isNetworkAvailable = isOnline(applicationContext)
                 if (isNetworkAvailable) {
                     model.getData(searchWord, isNetworkAvailable)
                 } else {
@@ -64,7 +71,7 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
         initViews()
     }
 
-    override fun setDataToAdapter(data: List<DataModel>) {
+    override fun setDataToAdapter(data: List<geekbrains.ru.model.data.userdata.DataModel>) {
         adapter.setData(data)
     }
 
@@ -84,16 +91,17 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
     }
 
     private fun iniViewModel() {
-        if (binding.mainActivityRecyclerview.adapter != null) {
+        if (mainActivityRecyclerview.adapter != null) {
             throw IllegalStateException("The ViewModel should be initialised first")
         }
-        val viewModel: MainViewModel by viewModel()
+        val viewModel: MainViewModel by currentScope.inject()
+
         model = viewModel
         model.subscribe().observe(this@MainActivity, { renderData(it) })
     }
 
     private fun initViews() {
-        binding.searchFab.setOnClickListener(fabClickListener)
-        binding.mainActivityRecyclerview.adapter = adapter
+        searchFAB.setOnClickListener(fabClickListener)
+        mainActivityRecyclerview.adapter = adapter
     }
 }
