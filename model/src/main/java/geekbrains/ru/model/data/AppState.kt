@@ -1,5 +1,7 @@
 package geekbrains.ru.model.data
 
+import geekbrains.ru.model.data.userdata.DataModel
+
 sealed class AppState {
 
     data class Success(val data: List<DataModel>?) : AppState()

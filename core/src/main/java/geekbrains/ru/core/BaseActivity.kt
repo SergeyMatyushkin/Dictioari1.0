@@ -3,13 +3,16 @@ package geekbrains.ru.core
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import geekbrains.ru.core.databinding.LoadingLayoutBinding
 import geekbrains.ru.core.viewmodel.BaseViewModel
 import geekbrains.ru.core.viewmodel.Interactor
 import geekbrains.ru.model.data.AppState
-import geekbrains.ru.model.data.DataModel
-import geekbrains.ru.utils.network.isOnline
+import geekbrains.ru.model.data.userdata.DataModel
+import geekbrains.ru.utils.network.OnlineLiveData
+
+
 import geekbrains.ru.utils.ui.AlertDialogFragment
 
 private const val DIALOG_FRAGMENT_TAG = "74a54328-5d62-46bf-ab6b-cbf5d8c79522"
@@ -18,18 +21,32 @@ abstract class BaseActivity<T : AppState, I : Interactor<T>> : AppCompatActivity
 
     private lateinit var binding: LoadingLayoutBinding
     abstract val model: BaseViewModel<T>
-    protected var isNetworkAvailable: Boolean = false
+    protected var isNetworkAvailable: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
-        isNetworkAvailable = isOnline(applicationContext)
+        subscribeToNetworkChange()
     }
+
+    private fun subscribeToNetworkChange() {
+        OnlineLiveData(this).observe(
+            this@BaseActivity,
+            {
+                isNetworkAvailable = it
+                if (!isNetworkAvailable) {
+                    Toast.makeText(
+                        this@BaseActivity,
+                        R.string.dialog_message_device_is_offline,
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            })
+    }
+
 
     override fun onResume() {
         super.onResume()
         binding = LoadingLayoutBinding.inflate(layoutInflater)
-
-        isNetworkAvailable = isOnline(applicationContext)
         if (!isNetworkAvailable && isDialogNull()) {
             showNoInternetConnectionDialog()
         }

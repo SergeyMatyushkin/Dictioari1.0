@@ -6,14 +6,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import geekbrains.ru.history.R
-import geekbrains.ru.model.data.DataModel
+
 import kotlinx.android.synthetic.main.activity_history_recyclerview_item.view.*
 
 class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.RecyclerItemViewHolder>() {
 
-    private var data: List<DataModel> = arrayListOf()
+    private var data: List<geekbrains.ru.model.data.userdata.DataModel> = arrayListOf()
 
-    fun setData(data: List<DataModel>) {
+    fun setData(data: List<geekbrains.ru.model.data.userdata.DataModel>) {
         this.data = data
         notifyDataSetChanged()
     }
@@ -35,11 +35,12 @@ class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.RecyclerItemViewHolde
 
     inner class RecyclerItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        fun bind(data: DataModel) {
+        fun bind(data: geekbrains.ru.model.data.userdata.DataModel) {
             if (layoutPosition != RecyclerView.NO_POSITION) {
                 itemView.header_history_textview_recycler_item.text = data.text
                 itemView.setOnClickListener {
-                    Toast.makeText(itemView.context, "on click: ${data.text}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(itemView.context, "on click: ${data.text}", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
