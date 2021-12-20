@@ -11,8 +11,6 @@ import geekbrains.ru.core.viewmodel.Interactor
 import geekbrains.ru.model.data.AppState
 import geekbrains.ru.model.data.userdata.DataModel
 import geekbrains.ru.utils.network.OnlineLiveData
-
-
 import geekbrains.ru.utils.ui.AlertDialogFragment
 
 private const val DIALOG_FRAGMENT_TAG = "74a54328-5d62-46bf-ab6b-cbf5d8c79522"
