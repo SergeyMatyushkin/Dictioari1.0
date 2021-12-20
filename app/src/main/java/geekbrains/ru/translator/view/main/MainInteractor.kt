@@ -2,7 +2,6 @@ package geekbrains.ru.translator.view.main
 
 import geekbrains.ru.core.viewmodel.Interactor
 import geekbrains.ru.model.data.AppState
-
 import geekbrains.ru.model.data.dto.SearchResultDto
 import geekbrains.ru.repository.Repository
 import geekbrains.ru.repository.RepositoryLocal
@@ -24,4 +23,3 @@ class MainInteractor(
         return appState
     }
 }
-

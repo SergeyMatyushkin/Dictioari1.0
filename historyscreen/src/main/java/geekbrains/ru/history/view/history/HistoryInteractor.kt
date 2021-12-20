@@ -3,7 +3,6 @@ package geekbrains.ru.history.view.history
 import geekbrains.ru.core.viewmodel.Interactor
 import geekbrains.ru.history.mapSearchResultToResult
 import geekbrains.ru.model.data.AppState
-
 import geekbrains.ru.model.data.dto.SearchResultDto
 import geekbrains.ru.repository.Repository
 import geekbrains.ru.repository.RepositoryLocal

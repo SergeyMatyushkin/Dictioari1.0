@@ -1,8 +1,8 @@
 package geekbrains.ru.history
 
 import geekbrains.ru.model.data.AppState
-
 import geekbrains.ru.model.data.dto.SearchResultDto
+import geekbrains.ru.model.data.userdata.DataModel
 import geekbrains.ru.model.data.userdata.Meaning
 import geekbrains.ru.model.data.userdata.TranslatedMeaning
 
@@ -13,8 +13,8 @@ fun parseLocalSearchResults(data: AppState): AppState {
 private fun mapResult(
     data: AppState,
     isOnline: Boolean
-): List<geekbrains.ru.model.data.userdata.DataModel> {
-    val newSearchResults = arrayListOf<geekbrains.ru.model.data.userdata.DataModel>()
+): List<DataModel> {
+    val newSearchResults = arrayListOf<DataModel>()
     when (data) {
         is AppState.Success -> {
             getSuccessResultData(data, isOnline, newSearchResults)
@@ -26,9 +26,9 @@ private fun mapResult(
 private fun getSuccessResultData(
     data: AppState.Success,
     isOnline: Boolean,
-    newSearchDataModels: ArrayList<geekbrains.ru.model.data.userdata.DataModel>
+    newSearchDataModels: ArrayList<DataModel>
 ) {
-    val searchDataModels: List<geekbrains.ru.model.data.userdata.DataModel> = data.data as List<geekbrains.ru.model.data.userdata.DataModel>
+    val searchDataModels: List<DataModel> = data.data as List<DataModel>
     if (searchDataModels.isNotEmpty()) {
         if (isOnline) {
             for (searchResult in searchDataModels) {
@@ -37,7 +37,7 @@ private fun getSuccessResultData(
         } else {
             for (searchResult in searchDataModels) {
                 newSearchDataModels.add(
-                    geekbrains.ru.model.data.userdata.DataModel(
+                    DataModel(
                         searchResult.text,
                         arrayListOf()
                     )
@@ -47,7 +47,7 @@ private fun getSuccessResultData(
     }
 }
 
-private fun parseOnlineResult(searchDataModel: geekbrains.ru.model.data.userdata.DataModel, newSearchDataModels: ArrayList<geekbrains.ru.model.data.userdata.DataModel>) {
+private fun parseOnlineResult(searchDataModel: DataModel, newSearchDataModels: ArrayList<DataModel>) {
     if (searchDataModel.text.isNotBlank() && searchDataModel.meanings.isNotEmpty()) {
         val newMeanings = arrayListOf<Meaning>()
         for (meaning in searchDataModel.meanings) {
@@ -62,7 +62,7 @@ private fun parseOnlineResult(searchDataModel: geekbrains.ru.model.data.userdata
         }
         if (newMeanings.isNotEmpty()) {
             newSearchDataModels.add(
-                geekbrains.ru.model.data.userdata.DataModel(
+                DataModel(
                     searchDataModel.text,
                     newMeanings
                 )
@@ -71,7 +71,7 @@ private fun parseOnlineResult(searchDataModel: geekbrains.ru.model.data.userdata
     }
 }
 
-fun mapSearchResultToResult(searchResults: List<SearchResultDto>): List<geekbrains.ru.model.data.userdata.DataModel> {
+fun mapSearchResultToResult(searchResults: List<SearchResultDto>): List<DataModel> {
     return searchResults.map { searchResult ->
         var meanings: List<Meaning> = listOf()
         searchResult.meanings?.let {
@@ -83,8 +83,7 @@ fun mapSearchResultToResult(searchResults: List<SearchResultDto>): List<geekbrai
                 )
             }
         }
-        geekbrains.ru.model.data.userdata.DataModel(searchResult.text ?: "", meanings)
+        DataModel(searchResult.text ?: "", meanings)
     }
 }
-
 

@@ -4,9 +4,8 @@ import android.os.Bundle
 import geekbrains.ru.core.BaseActivity
 import geekbrains.ru.history.databinding.ActivityHistoryBinding
 import geekbrains.ru.model.data.AppState
-
+import geekbrains.ru.model.data.userdata.DataModel
 import org.koin.android.scope.currentScope
-
 
 class HistoryActivity : BaseActivity<AppState, HistoryInteractor>() {
 
@@ -28,7 +27,7 @@ class HistoryActivity : BaseActivity<AppState, HistoryInteractor>() {
         model.getData("", false)
     }
 
-    override fun setDataToAdapter(data: List<geekbrains.ru.model.data.userdata.DataModel>) {
+    override fun setDataToAdapter(data: List<DataModel>) {
         adapter.setData(data)
     }
 
